@@ -1,0 +1,25 @@
+.tabs {
+    background: #fff;
+    border-radius: 5px;
+    padding: 10px 12px;
+    display: flex;
+    gap: 10px;
+    box-shadow: 0 1px 4px #172b4d0d;
+    margin-bottom: 16px
+}
+
+.tabs button {
+    background: #fff;
+    border: 1px solid #e6eaf0;
+    border-radius: 3px;
+    color: #59708e;
+    height: 27px;
+    width: 74px;
+    font-size: 11px
+}
+
+.tabs button.active {
+    background: #5000f5;
+    color: #fff;
+    border-color: #5000f5
+}
