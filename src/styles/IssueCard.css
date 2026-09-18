@@ -1,0 +1,120 @@
+.issue-card {
+    background: #fff;
+    text-align: left;
+    border: 1px solid #e1e7ec;
+    border-top: 2px solid #11c897;
+    border-radius: 3px;
+    padding: 10px 10px 8px;
+    min-height: 163px;
+    transition: .15s;
+    cursor: pointer
+}
+
+.issue-card:hover {
+    box-shadow: 0 3px 12px #23395d20;
+    transform: translateY(-1px)
+}
+
+.issue-card.closed {
+    border-top-color: #7419ed
+}
+
+.issue-card.in-progress {
+    border-top-color: #ff9500
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.status-icon {
+    color: #09ba8a;
+    font-size: 14px
+}
+
+.closed .status-icon {
+    color: #7919ef
+}
+
+.in-progress .status-icon {
+    color: #ff9500
+}
+
+.priority {
+    font-size: 8px;
+    border-radius: 10px;
+    padding: 3px 9px;
+    line-height: 1;
+    font-weight: 700
+}
+
+.priority.low {
+    color: #8d96a3;
+    background: #eef1f4
+}
+
+.priority.medium {
+    color: #d49300;
+    background: #fff0bc
+}
+
+.priority.high {
+    color: #f05c63;
+    background: #ffe4e4
+}
+
+.priority.critical {
+    color: #fff;
+    background: #f15159
+}
+
+.issue-card h3 {
+    font-size: 10px;
+    line-height: 12px;
+    margin: 8px 0 4px;
+    color: #1f2c40
+}
+
+.issue-card p {
+    font-size: 8px;
+    line-height: 11px;
+    height: 24px;
+    overflow: hidden;
+    color: #738198;
+    margin: 0
+}
+
+.labels {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px
+}
+
+.label {
+    font-size: 7px;
+    border-radius: 8px;
+    padding: 3px 6px;
+    font-weight: 600
+}
+
+.red {
+    background: #ffe6e7;
+    color: #f25b62
+}
+
+.amber {
+    background: #fff1c9;
+    color: #e3a300
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #edf0f3;
+    color: #8b9bad;
+    font-size: 8px;
+    margin-top: 10px;
+    padding-top: 7px
+}
