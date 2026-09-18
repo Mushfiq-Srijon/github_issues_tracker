@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { GitHubMark } from '../Common/GitHubMark';
-import '../../styles/Login.css';
+import '../../styles/Auth.css';
 
-export function Login({ onLogin }) {
+export function Login({ onLogin, onSwitchToRegister }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -11,15 +11,20 @@ export function Login({ onLogin }) {
         e.preventDefault();
 
         if (!email || !password) {
-            return setError('Please enter your username and password.');
+            return setError('Please enter your email and password.');
         }
 
+        if (!email.includes('@')) {
+            return setError('Please enter a valid email.');
+        }
+
+        setError('');
         onLogin();
     };
 
     return (
-        <main className="login-page">
-            <section className="login-card">
+        <main className="auth-page">
+            <section className="auth-card">
                 <GitHubMark large />
 
                 <h1>GitHub Issues Tracker</h1>
@@ -27,11 +32,15 @@ export function Login({ onLogin }) {
 
                 <form onSubmit={handleSubmit}>
                     <label>
-                        Username
+                        Email Address
                         <input
+                            type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter Username"
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setError('');
+                            }}
+                            placeholder="Enter your email"
                         />
                     </label>
 
@@ -40,8 +49,11 @@ export function Login({ onLogin }) {
                         <input
                             type="password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter Password"
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                setError('');
+                            }}
+                            placeholder="Enter your password"
                         />
                     </label>
 
@@ -49,6 +61,13 @@ export function Login({ onLogin }) {
 
                     <button className="primary full">Sign In</button>
                 </form>
+
+                <p className="switch-auth">
+                    Don't have an account?{' '}
+                    <button className="link-btn" onClick={onSwitchToRegister}>
+                        Create one
+                    </button>
+                </p>
             </section>
         </main>
     );

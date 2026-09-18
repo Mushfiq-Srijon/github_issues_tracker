@@ -1,77 +1,71 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Login } from '../components/Auth/Login';
-import { Header } from '../components/Header/Header';
-import { Tabs } from '../components/Tabs/Tabs';
-import { IssuesList } from '../components/IssuesList/IssuesList';
-import { IssueModal } from '../components/Modals/IssueModal';
-import { NewIssueModal } from '../components/Modals/NewIssueModal';
-import { filteredIssues } from '../utils/issueFilters';
+import { Register } from '../components/Auth/Register';
+import { Dashboard } from '../components/Dashboard/Dashboard';
+import { IssuesPage } from './IssuesPage';
 import { seedIssues } from '../data/seedData';
-import '../styles/App.css';
 
 export default function App() {
     const [loggedIn, setLoggedIn] = useState(false);
+    const [path, setPath] = useState(() => window.location.pathname || '/login');
     const [issues, setIssues] = useState(seedIssues);
-    const [tab, setTab] = useState('All');
-    const [search, setSearch] = useState('');
-    const [selectedIssue, setSelectedIssue] = useState(null);
-    const [showNewIssueModal, setShowNewIssueModal] = useState(false);
 
-    if (!loggedIn) {
-        return <Login onLogin={() => setLoggedIn(true)} />;
+    useEffect(() => {
+        const handlePopState = () => setPath(window.location.pathname || '/login');
+        window.addEventListener('popstate', handlePopState);
+
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
+    const navigate = (nextPath) => {
+        window.history.pushState({}, '', nextPath);
+        setPath(nextPath);
+    };
+
+    const handleLogin = () => {
+        setLoggedIn(true);
+        navigate('/dashboard');
+    };
+
+    const handleLogout = () => {
+        setLoggedIn(false);
+        navigate('/login');
+    };
+
+    if (path === '/register') {
+        return (
+            <Register
+                onRegister={() => navigate('/login')}
+                onSwitchToLogin={() => navigate('/login')}
+            />
+        );
     }
 
-    const filtered = filteredIssues(issues, tab, search);
+    if (!loggedIn || path === '/login') {
+        return (
+            <Login
+                onLogin={handleLogin}
+                onSwitchToRegister={() => navigate('/register')}
+            />
+        );
+    }
 
-    const handleCreateIssue = (newIssue) => {
-        setIssues([
-            {
-                ...newIssue,
-                id: Date.now(),
-                author: 'jhon.doe',
-                date: '09/18/2026',
-                description: newIssue.description || 'No description provided.',
-            },
-            ...issues,
-        ]);
-
-        setShowNewIssueModal(false);
-    };
-
-    const handleDeleteIssue = () => {
-        setIssues(issues.filter((i) => i.id !== selectedIssue.id));
-        setSelectedIssue(null);
-    };
+    if (path === '/dashboard') {
+        return (
+            <Dashboard
+                issues={issues}
+                onNavigateToIssues={() => navigate('/issues')}
+                onLogout={handleLogout}
+            />
+        );
+    }
 
     return (
-        <div className="app">
-            <Header
-                onLogout={() => setLoggedIn(false)}
-                search={search}
-                onSearchChange={setSearch}
-                onNewIssue={() => setShowNewIssueModal(true)}
-            />
-
-            <main className="content">
-                <Tabs activeTab={tab} onTabChange={setTab} />
-
-                <IssuesList issues={filtered} onIssueClick={setSelectedIssue} />
-            </main>
-
-            {selectedIssue && (
-                <IssueModal
-                    issue={selectedIssue}
-                    onClose={() => setSelectedIssue(null)}
-                    onDelete={handleDeleteIssue}
-                />
-            )}
-
-            {showNewIssueModal && (
-                <NewIssueModal
-                    onClose={() => setShowNewIssueModal(false)}
-                    onCreate={handleCreateIssue}
-                />
-            )}
-        </div>
+        <IssuesPage
+            issues={issues}
+            setIssues={setIssues}
+            onDashboard={() => navigate('/dashboard')}
+            onLogout={handleLogout}
+        />
     );
 }
