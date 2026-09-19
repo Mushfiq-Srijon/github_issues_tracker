@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GitHubMark } from '../Common/GitHubMark';
 import '../../styles/Auth.css';
+import { apiRequest } from '../../api';
 
 export function Register({ onRegister, onSwitchToLogin }) {
     const [form, setForm] = useState({
@@ -9,18 +10,22 @@ export function Register({ onRegister, onSwitchToLogin }) {
         password: '',
         confirmPassword: '',
     });
+
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setForm({
             ...form,
             [e.target.name]: e.target.value,
         });
+
         setError('');
+        setSuccess('');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!form.fullName.trim()) {
@@ -43,12 +48,31 @@ export function Register({ onRegister, onSwitchToLogin }) {
             return setError('Passwords do not match.');
         }
 
-        setSuccess('Registration successful! Redirecting to login...');
         setError('');
+        setSuccess('');
+        setLoading(true);
 
-        setTimeout(() => {
-            onRegister(form);
-        }, 1500);
+        try {
+            await apiRequest('/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: form.fullName,
+                    email: form.email,
+                    password: form.password,
+                    password_confirmation: form.confirmPassword,
+                }),
+            });
+
+            setSuccess('Registration successful! Redirecting to login...');
+
+            setTimeout(() => {
+                onRegister();
+            }, 1000);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -107,7 +131,9 @@ export function Register({ onRegister, onSwitchToLogin }) {
                     {error && <span className="error">{error}</span>}
                     {success && <span className="success">{success}</span>}
 
-                    <button className="primary full">Register</button>
+                    <button className="primary full" disabled={loading}>
+                        {loading ? 'Creating Account...' : 'Register'}
+                    </button>
                 </form>
 
                 <p className="switch-auth">

@@ -1,38 +1,87 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/Header/Header';
 import { Tabs } from '../components/Tabs/Tabs';
 import { IssuesList } from '../components/IssuesList/IssuesList';
 import { IssueModal } from '../components/Modals/IssueModal';
 import { NewIssueModal } from '../components/Modals/NewIssueModal';
-import { filteredIssues } from '../utils/issueFilters';
+import { apiRequest } from '../api';
 import '../styles/App.css';
 
-export function IssuesPage({ issues, setIssues, onDashboard, onLogout }) {
+export function IssuesPage({ onDashboard, onLogout }) {
+    const [issues, setIssues] = useState([]);
     const [tab, setTab] = useState('All');
     const [search, setSearch] = useState('');
     const [selectedIssue, setSelectedIssue] = useState(null);
     const [showNewIssueModal, setShowNewIssueModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const filtered = filteredIssues(issues, tab, search);
+    useEffect(() => {
+        const loadIssues = async () => {
+            try {
+                const data = await apiRequest('/issues');
+                setIssues(data.issues);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const handleCreateIssue = (newIssue) => {
-        setIssues([
-            {
-                ...newIssue,
-                id: Date.now(),
-                author: 'jhon.doe',
-                date: '09/18/2026',
-                description: newIssue.description || 'No description provided.',
-            },
-            ...issues,
-        ]);
+        loadIssues();
+    }, []);
 
-        setShowNewIssueModal(false);
+    const filteredIssues = issues.filter((issue) => {
+        const matchesTab =
+            tab === 'All' ||
+            issue.status === tab ||
+            (tab === 'Open' && issue.status === 'In Progress');
+
+        const matchesSearch = issue.title
+            .toLowerCase()
+            .includes(search.toLowerCase());
+
+        return matchesTab && matchesSearch;
+    });
+
+    const handleCreateIssue = async (newIssue) => {
+        try {
+            const data = await apiRequest('/issues', {
+                method: 'POST',
+                body: JSON.stringify(newIssue),
+            });
+
+            setIssues((currentIssues) => [
+                data.issue,
+                ...currentIssues,
+            ]);
+
+            setShowNewIssueModal(false);
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
-    const handleDeleteIssue = () => {
-        setIssues(issues.filter((issue) => issue.id !== selectedIssue.id));
-        setSelectedIssue(null);
+    const handleDeleteIssue = async () => {
+        if (!selectedIssue) {
+            return;
+        }
+
+        try {
+            await apiRequest(`/issues/${selectedIssue.id}`, {
+                method: 'DELETE',
+            });
+
+            setIssues((currentIssues) =>
+                currentIssues.filter(
+                    (issue) => issue.id !== selectedIssue.id
+                )
+            );
+
+            setSelectedIssue(null);
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
     return (
@@ -49,7 +98,16 @@ export function IssuesPage({ issues, setIssues, onDashboard, onLogout }) {
             <main className="content">
                 <Tabs activeTab={tab} onTabChange={setTab} />
 
-                <IssuesList issues={filtered} onIssueClick={setSelectedIssue} />
+                {error && <div className="error">{error}</div>}
+
+                {loading ? (
+                    <div className="empty">Loading issues...</div>
+                ) : (
+                    <IssuesList
+                        issues={filteredIssues}
+                        onIssueClick={setSelectedIssue}
+                    />
+                )}
             </main>
 
             {selectedIssue && (

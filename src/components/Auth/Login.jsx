@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { GitHubMark } from '../Common/GitHubMark';
 import '../../styles/Auth.css';
+import { apiRequest } from '../../api';
 
 export function Login({ onLogin, onSwitchToRegister }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!email || !password) {
@@ -19,7 +21,23 @@ export function Login({ onLogin, onSwitchToRegister }) {
         }
 
         setError('');
-        onLogin();
+        setLoading(true);
+
+        try {
+            const data = await apiRequest('/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            onLogin(data.user);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -59,7 +77,9 @@ export function Login({ onLogin, onSwitchToRegister }) {
 
                     {error && <span className="error">{error}</span>}
 
-                    <button className="primary full">Sign In</button>
+                    <button className="primary full" disabled={loading}>
+                        {loading ? 'Signing In...' : 'Sign In'}
+                    </button>
                 </form>
 
                 <p className="switch-auth">

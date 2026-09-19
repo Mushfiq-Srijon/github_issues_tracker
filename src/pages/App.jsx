@@ -4,14 +4,38 @@ import { Register } from '../components/Auth/Register';
 import { Dashboard } from '../components/Dashboard/Dashboard';
 import { IssuesPage } from './IssuesPage';
 import { seedIssues } from '../data/seedData';
+import { apiRequest } from '../api';
 
 export default function App() {
     const [loggedIn, setLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+    const [checkingAuth, setCheckingAuth] = useState(true);
     const [path, setPath] = useState(() => window.location.pathname || '/login');
     const [issues, setIssues] = useState(seedIssues);
 
     useEffect(() => {
-        const handlePopState = () => setPath(window.location.pathname || '/login');
+        const checkAuthentication = async () => {
+            try {
+                const data = await apiRequest('/user');
+
+                setUser(data.user);
+                setLoggedIn(true);
+            } catch {
+                setUser(null);
+                setLoggedIn(false);
+            } finally {
+                setCheckingAuth(false);
+            }
+        };
+
+        checkAuthentication();
+    }, []);
+
+    useEffect(() => {
+        const handlePopState = () => {
+            setPath(window.location.pathname || '/login');
+        };
+
         window.addEventListener('popstate', handlePopState);
 
         return () => window.removeEventListener('popstate', handlePopState);
@@ -22,20 +46,43 @@ export default function App() {
         setPath(nextPath);
     };
 
-    const handleLogin = () => {
+    const handleLogin = (loggedInUser) => {
+        setUser(loggedInUser);
         setLoggedIn(true);
         navigate('/dashboard');
     };
 
-    const handleLogout = () => {
+    const handleRegister = () => {
+        navigate('/login');
+    };
+
+    const handleLogout = async () => {
+        try {
+            await apiRequest('/logout', {
+                method: 'POST',
+            });
+        } catch {
+        }
+
+        setUser(null);
         setLoggedIn(false);
         navigate('/login');
     };
 
+    if (checkingAuth) {
+        return (
+            <main className="auth-page">
+                <section className="auth-card">
+                    <p>Checking authentication...</p>
+                </section>
+            </main>
+        );
+    }
+
     if (path === '/register') {
         return (
             <Register
-                onRegister={() => navigate('/login')}
+                onRegister={handleRegister}
                 onSwitchToLogin={() => navigate('/login')}
             />
         );
