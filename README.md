@@ -1,6 +1,6 @@
 # GitHub Issues Tracker
 
-A full-stack issue tracking application developed for the **NexGenix LTD Aspire Internship Program** assignment.
+A full-stack issue tracking application.
 
 The application allows users to create, manage, search, filter, and track software issues through a responsive web interface. Authentication is handled using JWT stored in HTTP-only cookies, while issue data is persisted in a MySQL database.
 
@@ -300,9 +300,3 @@ The frontend is deployed as a Vite application on Vercel. The Laravel REST API r
 * Production authentication cookies use secure HTTPS settings.
 * Users can only modify or delete their own issues.
 * Database credentials and application secrets are kept in environment variables.
-
-## Assignment
-
-This project was developed as part of the **Aspire Internship Program assignment for NexGenix LTD**.
-
-The application follows the provided requirements and Figma-based interface while implementing a functional React frontend, Laravel REST API, JWT authentication, and MySQL persistence.
