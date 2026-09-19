@@ -62,6 +62,34 @@ export function IssuesPage({ onDashboard, onLogout }) {
         }
     };
 
+    const handleUpdateIssue = async (updatedIssue) => {
+        if (!selectedIssue) {
+            return false;
+        }
+
+        try {
+            const data = await apiRequest(`/issues/${selectedIssue.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(updatedIssue),
+            });
+
+            setIssues((currentIssues) =>
+                currentIssues.map((issue) =>
+                    issue.id === selectedIssue.id
+                        ? data.issue
+                        : issue
+                )
+            );
+
+            setSelectedIssue(data.issue);
+
+            return true;
+        } catch (error) {
+            setError(error.message);
+            return false;
+        }
+    };
+
     const handleDeleteIssue = async () => {
         if (!selectedIssue) {
             return;
@@ -114,6 +142,7 @@ export function IssuesPage({ onDashboard, onLogout }) {
                 <IssueModal
                     issue={selectedIssue}
                     onClose={() => setSelectedIssue(null)}
+                    onUpdate={handleUpdateIssue}
                     onDelete={handleDeleteIssue}
                 />
             )}
