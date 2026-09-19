@@ -71,7 +71,10 @@ export function Dashboard({ onNavigateToIssues, onLogout }) {
     const recentActivity = dashboard.recentIssues.map((issue) => ({
         ...issue,
         author: issue.user?.name || 'Unknown User',
-        date: new Date(issue.updated_at).toLocaleDateString(),
+        date: new Date(issue.updated_at).toLocaleString([], {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        }),
     }));
 
     const statusDistribution = dashboard.statusDistribution;
