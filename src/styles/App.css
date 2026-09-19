@@ -1,22 +1,26 @@
 .app {
-    min-height: 100vh
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .content {
     max-width: 1200px;
     margin: 32px auto;
-    padding: 0 18px
+    padding: 0 18px;
+    box-sizing: border-box;
 }
 
 @media(max-width: 760px) {
     .content {
-        margin-top: 20px
+        margin-top: 20px;
+        padding: 0 14px;
     }
 }
 
 @media(max-width: 460px) {
     .content {
-        padding: 0 10px
+        padding: 0 10px;
     }
 }
 
@@ -24,6 +28,7 @@
     display: flex;
     gap: 14px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .filter-group {
@@ -54,6 +59,7 @@
     background: white;
     cursor: pointer;
     font-size: 14px;
+    box-sizing: border-box;
 }
 
 .filter-dropdown summary::-webkit-details-marker {
@@ -75,6 +81,7 @@
     border-radius: 8px;
     background: white;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
 }
 
 .filter-menu button {
@@ -102,4 +109,36 @@
 .filter-menu button span {
     width: 16px;
     font-size: 13px;
+}
+
+@media(max-width: 460px) {
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-title {
+        min-width: 55px;
+    }
+
+    .filter-dropdown {
+        flex: 1;
+    }
+
+    .filter-dropdown summary {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .filter-menu {
+        width: 100%;
+        min-width: 0;
+    }
+
 }
