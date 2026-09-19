@@ -19,3 +19,87 @@
         padding: 0 10px
     }
 }
+
+.filters {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.filter-dropdown {
+    position: relative;
+}
+
+.filter-dropdown summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-width: 150px;
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.filter-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.filter-dropdown[open] summary {
+    border-color: #8b5cf6;
+}
+
+.filter-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    min-width: 180px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.filter-menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.filter-menu button:hover {
+    background: #f5f3ff;
+}
+
+.filter-menu button.selected {
+    background: #f3efff;
+    font-weight: 600;
+}
+
+.filter-menu button span {
+    width: 16px;
+    font-size: 13px;
+}

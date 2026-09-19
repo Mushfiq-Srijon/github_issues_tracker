@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Header } from '../components/Header/Header';
-import { Tabs } from '../components/Tabs/Tabs';
 import { IssuesList } from '../components/IssuesList/IssuesList';
 import { IssueModal } from '../components/Modals/IssueModal';
 import { NewIssueModal } from '../components/Modals/NewIssueModal';
@@ -9,8 +8,9 @@ import '../styles/App.css';
 
 export function IssuesPage({ onDashboard, onLogout }) {
     const [issues, setIssues] = useState([]);
-    const [tab, setTab] = useState('All');
     const [search, setSearch] = useState('');
+    const [statusFilters, setStatusFilters] = useState([]);
+    const [priorityFilters, setPriorityFilters] = useState([]);
     const [selectedIssue, setSelectedIssue] = useState(null);
     const [showNewIssueModal, setShowNewIssueModal] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -31,19 +31,35 @@ export function IssuesPage({ onDashboard, onLogout }) {
         loadIssues();
     }, []);
 
-    const filteredIssues = issues.filter((issue) => {
-        const matchesTab =
-            tab === 'All' ||
-            issue.status === tab ||
-            (tab === 'Open' && issue.status === 'In Progress');
+    const toggleFilter = (value, currentFilters, setFilters) => {
+        if (currentFilters.includes(value)) {
+            setFilters(
+                currentFilters.filter((item) => item !== value)
+            );
+        } else {
+            setFilters([...currentFilters, value]);
+        }
+    };
 
+    const filteredIssues = issues.filter((issue) => {
         const matchesSearch = issue.title
             .toLowerCase()
             .includes(search.toLowerCase());
 
-        return matchesTab && matchesSearch;
-    });
+        const matchesStatus =
+            statusFilters.length === 0 ||
+            statusFilters.includes(issue.status);
 
+        const matchesPriority =
+            priorityFilters.length === 0 ||
+            priorityFilters.includes(issue.priority);
+
+        return (
+            matchesSearch &&
+            matchesStatus &&
+            matchesPriority
+        );
+    });
     const handleCreateIssue = async (newIssue) => {
         try {
             const data = await apiRequest('/issues', {
@@ -124,7 +140,99 @@ export function IssuesPage({ onDashboard, onLogout }) {
             />
 
             <main className="content">
-                <Tabs activeTab={tab} onTabChange={setTab} />
+
+                <div className="filters">
+                    <div className="filter-group">
+                        <span className="filter-title">Status</span>
+
+                        <details className="filter-dropdown">
+                            <summary>
+                                {statusFilters.length === 0
+                                    ? 'All Statuses'
+                                    : `${statusFilters.length} selected`}
+                                <span>⌄</span>
+                            </summary>
+
+                            <div className="filter-menu">
+                                {[
+                                    'Open',
+                                    'In Progress',
+                                    'Closed',
+                                ].map((status) => (
+                                    <button
+                                        type="button"
+                                        key={status}
+                                        className={
+                                            statusFilters.includes(status)
+                                                ? 'selected'
+                                                : ''
+                                        }
+                                        onClick={() =>
+                                            toggleFilter(
+                                                status,
+                                                statusFilters,
+                                                setStatusFilters
+                                            )
+                                        }
+                                    >
+                                        <span>
+                                            {statusFilters.includes(status)
+                                                ? '✓'
+                                                : ''}
+                                        </span>
+                                        {status}
+                                    </button>
+                                ))}
+                            </div>
+                        </details>
+                    </div>
+
+                    <div className="filter-group">
+                        <span className="filter-title">Priority</span>
+
+                        <details className="filter-dropdown">
+                            <summary>
+                                {priorityFilters.length === 0
+                                    ? 'All Priorities'
+                                    : `${priorityFilters.length} selected`}
+                                <span>⌄</span>
+                            </summary>
+
+                            <div className="filter-menu">
+                                {[
+                                    'Low',
+                                    'Medium',
+                                    'High',
+                                    'Critical',
+                                ].map((priority) => (
+                                    <button
+                                        type="button"
+                                        key={priority}
+                                        className={
+                                            priorityFilters.includes(priority)
+                                                ? 'selected'
+                                                : ''
+                                        }
+                                        onClick={() =>
+                                            toggleFilter(
+                                                priority,
+                                                priorityFilters,
+                                                setPriorityFilters
+                                            )
+                                        }
+                                    >
+                                        <span>
+                                            {priorityFilters.includes(priority)
+                                                ? '✓'
+                                                : ''}
+                                        </span>
+                                        {priority}
+                                    </button>
+                                ))}
+                            </div>
+                        </details>
+                    </div>
+                </div>
 
                 {error && <div className="error">{error}</div>}
 
