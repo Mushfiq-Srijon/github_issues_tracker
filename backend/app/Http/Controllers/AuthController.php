@@ -54,10 +54,10 @@ class AuthController extends Controller
                     config('jwt.ttl'),
                     '/',
                     null,
-                    false,
+                    app()->environment('production'),
                     true,
                     false,
-                    'lax'
+                    app()->environment('production') ? 'none' : 'lax'
                 )
             );
     }
@@ -77,10 +77,10 @@ class AuthController extends Controller
                     -1,
                     '/',
                     null,
-                    false,
+                    app()->environment('production'),
                     true,
                     false,
-                    'lax'
+                    app()->environment('production') ? 'none' : 'lax'
                 )
             );
     }
@@ -91,7 +91,6 @@ class AuthController extends Controller
             'user' => auth('api')->user(),
         ]);
     }
-
     public function refresh()
     {
         $token = auth('api')->refresh();
@@ -107,10 +106,10 @@ class AuthController extends Controller
                     config('jwt.ttl'),
                     '/',
                     null,
-                    false,
+                    app()->environment('production'),
                     true,
                     false,
-                    'lax'
+                    app()->environment('production') ? 'none' : 'lax'
                 )
             );
     }

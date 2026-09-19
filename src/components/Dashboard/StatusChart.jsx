@@ -2,11 +2,11 @@ import '../../styles/StatusChart.css';
 
 export function StatusChart({ distribution }) {
   const { open, inProgress, closed } = distribution;
-  const total = open + inProgress + closed || 1;
+  const total = open + inProgress + closed;
 
-  const openPercent = Math.round((open / total) * 100);
-  const inProgressPercent = Math.round((inProgress / total) * 100);
-  const closedPercent = Math.round((closed / total) * 100);
+  const openPercent = total > 0 ? Math.round((open / total) * 100) : 0;
+  const inProgressPercent = total > 0 ? Math.round((inProgress / total) * 100) : 0;
+  const closedPercent = total > 0 ? Math.round((closed / total) * 100) : 0;
 
   return (
     <div className="status-chart">
