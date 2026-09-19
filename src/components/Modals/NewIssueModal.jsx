@@ -57,7 +57,12 @@ export function NewIssueModal({ onClose, onCreate }) {
                             value={form.priority}
                             onChange={handleChange}
                         >
-                            {['Low', 'Medium', 'High', 'Critical'].map((x) => (
+                            {[
+                                'Low',
+                                'Medium',
+                                'High',
+                                'Critical',
+                            ].map((x) => (
                                 <option key={x}>{x}</option>
                             ))}
                         </select>
@@ -70,7 +75,11 @@ export function NewIssueModal({ onClose, onCreate }) {
                             value={form.status}
                             onChange={handleChange}
                         >
-                            {['Open', 'In Progress', 'Closed'].map((x) => (
+                            {[
+                                'Open',
+                                'In Progress',
+                                'Closed',
+                            ].map((x) => (
                                 <option key={x}>{x}</option>
                             ))}
                         </select>
@@ -90,7 +99,6 @@ export function NewIssueModal({ onClose, onCreate }) {
                                 'UI/UX',
                                 'Backend',
                                 'Frontend',
-                                'Enhancement',
                             ].map((x) => (
                                 <option key={x}>{x}</option>
                             ))}
@@ -103,7 +111,9 @@ export function NewIssueModal({ onClose, onCreate }) {
                         Cancel
                     </button>
 
-                    <button className="primary">Create Issue</button>
+                    <button className="primary">
+                        Create Issue
+                    </button>
                 </div>
             </form>
         </Modal>
