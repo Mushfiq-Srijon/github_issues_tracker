@@ -3,7 +3,6 @@ import { Login } from '../components/Auth/Login';
 import { Register } from '../components/Auth/Register';
 import { Dashboard } from '../components/Dashboard/Dashboard';
 import { IssuesPage } from './IssuesPage';
-import { seedIssues } from '../data/seedData';
 import { apiRequest } from '../api';
 
 export default function App() {
@@ -11,7 +10,6 @@ export default function App() {
     const [user, setUser] = useState(null);
     const [checkingAuth, setCheckingAuth] = useState(true);
     const [path, setPath] = useState(() => window.location.pathname || '/login');
-    const [issues, setIssues] = useState(seedIssues);
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -100,7 +98,6 @@ export default function App() {
     if (path === '/dashboard') {
         return (
             <Dashboard
-                issues={issues}
                 onNavigateToIssues={() => navigate('/issues')}
                 onLogout={handleLogout}
             />
@@ -109,8 +106,6 @@ export default function App() {
 
     return (
         <IssuesPage
-            issues={issues}
-            setIssues={setIssues}
             onDashboard={() => navigate('/dashboard')}
             onLogout={handleLogout}
         />

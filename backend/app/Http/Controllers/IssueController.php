@@ -94,7 +94,7 @@ class IssueController extends Controller
 
         return response()->json([
             'message' => 'Issue updated successfully.',
-            'issue' => $issue->fresh(),
+            'issue' => $issue->fresh()->load('user'),
         ]);
     }
 
